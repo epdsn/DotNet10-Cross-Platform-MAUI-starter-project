@@ -1,4 +1,7 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject MauiApp25.Services.IAuthService AuthService
+@implements IDisposable
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">MauiApp25</a>
     </div>
@@ -23,5 +26,43 @@
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
             </NavLink>
         </div>
+
+        @if (!AuthService.IsSignedIn)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="login">Log In</NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="signup">Sign Up</NavLink>
+            </div>
+        }
+        else
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="profile">Profile (@AuthService.CurrentUsername)</NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <a class="nav-link" href="#" @onclick="Logout">Log Out</a>
+            </div>
+        }
     </nav>
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AuthService.AuthStateChanged += OnAuthStateChanged;
+    }
+
+    private void OnAuthStateChanged() => InvokeAsync(StateHasChanged);
+
+    private async Task Logout()
+    {
+        await AuthService.SignOutAsync();
+    }
+
+    public void Dispose()
+    {
+        AuthService.AuthStateChanged -= OnAuthStateChanged;
+    }
+}

@@ -1,14 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:MauiApp25"
              xmlns:components="clr-namespace:MauiApp25.Components"
-             x:Class="MauiApp25.MainPage">
+             x:Class="MauiApp25.MainPage"
+             Title="MauiApp25">
 
-    <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
-        <BlazorWebView.RootComponents>
-            <RootComponent Selector="#app" ComponentType="{x:Type components:Routes}" />
-        </BlazorWebView.RootComponents>
-    </BlazorWebView>
+    <Grid RowDefinitions="Auto,*">
+        <!-- Header row with native buttons -->
+        <HorizontalStackLayout Padding="10" Spacing="10" HorizontalOptions="Center" Grid.Row="0">
+            <Button x:Name="LoginButton" Text="Log In" />
+            <Button x:Name="SignupButton" Text="Sign Up" />
+        </HorizontalStackLayout>
+
+        <!-- Blazor content fills remaining space -->
+        <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html" Grid.Row="1" VerticalOptions="FillAndExpand">
+            <BlazorWebView.RootComponents>
+                <RootComponent Selector="#app" ComponentType="{x:Type components:Routes}" />
+            </BlazorWebView.RootComponents>
+        </BlazorWebView>
+    </Grid>
 
 </ContentPage>

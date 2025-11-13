@@ -24,6 +24,23 @@
     </div>
 
     <script src="_framework/blazor.webview.js" autostart="false"></script>
+    <script>
+        // __nativeNavigate communicates with the MAUI host. The BlazorWebView host exposes a
+        // window.external.notify-like function for invoking native code. For the WebView bridge
+        // the method name differs by platform; BlazorWebView provides a global helper.
+        window.__nativeNavigate = function (target) {
+            try {
+                if (window.external && typeof window.external.notify === 'function') {
+                    window.external.notify(JSON.stringify({ type: 'nativeNavigate', target }));
+                }
+                else if (window.chrome && window.chrome.webview && window.chrome.webview.postMessage) {
+                    window.chrome.webview.postMessage(JSON.stringify({ type: 'nativeNavigate', target }));
+                }
+            } catch (e) {
+                console.warn('native navigate not available', e);
+            }
+        };
+    </script>
 
 </body>
 

@@ -1,0 +1,33 @@
+@page "/signup"
+@inject MauiApp25.Services.IAuthService AuthService
+@inject NavigationManager Nav
+
+<h3>Sign Up</h3>
+
+<input @bind="username" placeholder="Username" />
+<input @bind="password" placeholder="Password" type="password" />
+<button @onclick="DoSignup">Sign Up</button>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <p style="color:red">@message</p>
+}
+
+@code {
+    string username = string.Empty;
+    string password = string.Empty;
+    string? message;
+
+    private async Task DoSignup()
+    {
+        var ok = await AuthService.SignUpAsync(username, password);
+        if (ok)
+        {
+            Nav.NavigateTo("/profile");
+        }
+        else
+        {
+            message = "Unable to sign up (maybe user exists)";
+        }
+    }
+}

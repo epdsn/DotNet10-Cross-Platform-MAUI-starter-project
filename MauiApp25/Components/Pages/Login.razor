@@ -1,0 +1,33 @@
+@page "/login"
+@inject MauiApp25.Services.IAuthService AuthService
+@inject NavigationManager Nav
+
+<h3>Login</h3>
+
+<input @bind="username" placeholder="Username" />
+<input @bind="password" placeholder="Password" type="password" />
+<button @onclick="DoLogin">Sign In</button>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <p style="color:red">@message</p>
+}
+
+@code {
+    string username = string.Empty;
+    string password = string.Empty;
+    string? message;
+
+    private async Task DoLogin()
+    {
+        var ok = await AuthService.SignInAsync(username, password);
+        if (ok)
+        {
+            Nav.NavigateTo("/profile");
+        }
+        else
+        {
+            message = "Invalid credentials";
+        }
+    }
+}
