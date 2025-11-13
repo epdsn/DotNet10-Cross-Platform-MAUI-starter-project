@@ -10,6 +10,7 @@
         <HorizontalStackLayout Padding="10" Spacing="10" HorizontalOptions="Center" Grid.Row="0">
             <Button x:Name="LoginButton" Text="Log In" />
             <Button x:Name="SignupButton" Text="Sign Up" />
+            <Button x:Name="LogoutButton" Text="Log Out" IsVisible="False" />
         </HorizontalStackLayout>
 
         <!-- Blazor content fills remaining space -->
