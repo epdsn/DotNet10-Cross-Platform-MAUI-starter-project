@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="DataObjects/DataObjects.csproj" Id="0702cab6-ef5a-479e-8549-8c01a48e3a0e" />
   <Project Path="MauiApp25/MauiApp25.csproj">
     <Deploy />
   </Project>

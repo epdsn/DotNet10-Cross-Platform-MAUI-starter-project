@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Threading.Tasks;
+using DataObjects;
 
 namespace MauiApp25.Services
 {
@@ -16,7 +16,7 @@ namespace MauiApp25.Services
 
             // Find local IPv4 address and subnet
             var hostEntry = Dns.GetHostEntry(Dns.GetHostName());
-            var localIp = hostEntry.AddressList.FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork);
+            var localIp = hostEntry.AddressList.FirstOrDefault(a => a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
             if (localIp == null)
                 return results;
 
@@ -34,21 +34,9 @@ namespace MauiApp25.Services
                 var ip = basePrefix + i;
                 tasks.Add(Task.Run(async () =>
                 {
-                    using var client = new TcpClient();
-                    try
-                    {
-                        var connectTask = client.ConnectAsync(ip, port);
-                        var completed = await Task.WhenAny(connectTask, Task.Delay(timeoutMs));
-                        var isOpen = completed == connectTask && client.Connected;
-
-                        var info = new MauiApp25.Models.DeviceInfo { IpAddress = ip, Port = port, IsOpen = isOpen };
-                        lock (lockObj) results.Add(info);
-                    }
-                    catch
-                    {
-                        var info = new MauiApp25.Models.DeviceInfo { IpAddress = ip, Port = port, IsOpen = false };
-                        lock (lockObj) results.Add(info);
-                    }
+                    var isOpen = await ConnectionManager.IsTcpPortOpenAsync(ip, port, timeoutMs);
+                    var info = new MauiApp25.Models.DeviceInfo { IpAddress = ip, Port = port, IsOpen = isOpen };
+                    lock (lockObj) results.Add(info);
                 }));
             }
 
