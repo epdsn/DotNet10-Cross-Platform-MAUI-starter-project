@@ -5,7 +5,7 @@
              x:Class="MauiApp25.MainPage"
              Title="MauiApp25">
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,Auto,*">
         <!-- Header row with native buttons -->
         <HorizontalStackLayout Padding="10" Spacing="10" HorizontalOptions="Center" Grid.Row="0">
             <Button x:Name="LoginButton" Text="Log In" />
@@ -13,12 +13,41 @@
             <Button x:Name="LogoutButton" Text="Log Out" IsVisible="False" />
         </HorizontalStackLayout>
 
+        <!-- Scan controls -->
+        <HorizontalStackLayout Padding="10" Spacing="10" Grid.Row="1" HorizontalOptions="Center">
+            <Button x:Name="ScanButton" Text="Scan Network" />
+            <Entry x:Name="PortEntry" WidthRequest="100" Placeholder="Port" Text="22" />
+        </HorizontalStackLayout>
+
         <!-- Blazor content fills remaining space -->
-        <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html" Grid.Row="1" VerticalOptions="FillAndExpand">
-            <BlazorWebView.RootComponents>
-                <RootComponent Selector="#app" ComponentType="{x:Type components:Routes}" />
-            </BlazorWebView.RootComponents>
-        </BlazorWebView>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="300" />
+            </Grid.ColumnDefinitions>
+
+            <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html" Grid.Column="0" VerticalOptions="FillAndExpand">
+                <BlazorWebView.RootComponents>
+                    <RootComponent Selector="#app" ComponentType="{x:Type components:Routes}" />
+                </BlazorWebView.RootComponents>
+            </BlazorWebView>
+
+            <CollectionView x:Name="DevicesList" Grid.Column="1" SelectionMode="Single" ItemsLayout="VerticalList">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label Text="{Binding IpAddress}" Grid.Column="0" />
+                            <Button Text="Connect" Grid.Column="1" Clicked="ConnectButton_Clicked" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
     </Grid>
 
 </ContentPage>

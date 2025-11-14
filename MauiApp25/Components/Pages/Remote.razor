@@ -1,0 +1,15 @@
+@page "/remote/{Ip}"
+@inject NavigationManager Nav
+
+@code {
+    [Parameter]
+    public string Ip { get; set; } = string.Empty;
+}
+
+<h3>Remote Session</h3>
+<p>Connected to @Ip (placeholder)</p>
+<button @onclick="Back">Back</button>
+
+@code {
+    private void Back() => Nav.NavigateTo("/");
+}}

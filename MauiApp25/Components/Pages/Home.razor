@@ -1,5 +1,75 @@
 ﻿@page "/"
+@using MauiApp25.Models
+@inject MauiApp25.Services.NetworkScanner Scanner
+@inject NavigationManager Nav
 
-<h1>Hello, world!</h1>
+<h1>Network Scanner</h1>
 
-Welcome to your new app.
+<div class="mb-3">
+    <label>Port:</label>
+    <input @bind="portText" placeholder="Port (e.g. 22)" />
+    <button @onclick="Scan">Scan Network</button>
+</div>
+
+@if (isScanning)
+{
+    <p>Scanning... please wait.</p>
+}
+
+@if (devices != null && devices.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>IP</th>
+                <th>Port</th>
+                <th>Open</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var d in devices)
+            {
+                <tr>
+                    <td>@d.IpAddress</td>
+                    <td>@d.Port</td>
+                    <td>@(d.IsOpen ? "Yes" : "No")</td>
+                    <td>
+                        <button disabled="@(!d.IsOpen)" @onclick="() => Connect(d.IpAddress, d.Port)">Connect</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<DeviceInfo>? devices;
+    private bool isScanning;
+    private string portText = "22";
+
+    private async Task Scan()
+    {
+        isScanning = true;
+        devices = null;
+        StateHasChanged();
+
+        if (!int.TryParse(portText, out var port)) port = 22;
+
+        try
+        {
+            devices = await Scanner.ScanLocalSubnetAsync(port, 200);
+        }
+        finally
+        {
+            isScanning = false;
+            StateHasChanged();
+        }
+    }
+
+    private void Connect(string ip, int port)
+    {
+        var urlIp = Uri.EscapeDataString(ip);
+        Nav.NavigateTo($"/remote/{urlIp}");
+    }
+}

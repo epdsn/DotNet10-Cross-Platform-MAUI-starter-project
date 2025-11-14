@@ -11,8 +11,8 @@
             // Store the service provider for app-wide access
             Services = serviceProvider;
 
-            // Use MainPage as the startup page. Wrap in NavigationPage for navigation.
-            var mainPage = serviceProvider.GetService<MainPage>() ?? new MainPage();
+            // Use MainPage as the startup page. Resolve via DI so constructor dependencies are injected.
+            var mainPage = (MainPage)serviceProvider.GetService(typeof(MainPage)) ?? new MainPage(serviceProvider.GetService<Services.NetworkScanner>()!);
             MainPage = new NavigationPage(mainPage) { Title = "MauiApp25" };
         }
 
